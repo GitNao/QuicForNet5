@@ -5,6 +5,7 @@
 using System.Buffers;
 using System.IO;
 using System.Net.Quic.Implementations;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -109,6 +110,35 @@ namespace System.Net.Quic
             if (disposing)
             {
                 _provider.Dispose();
+            }
+        }
+
+        /// <summary>Validates arguments provided to reading and writing methods on <see cref="Stream"/>.</summary>
+        /// <param name="buffer">The array "buffer" argument passed to the reading or writing method.</param>
+        /// <param name="offset">The integer "offset" argument passed to the reading or writing method.</param>
+        /// <param name="count">The integer "count" argument passed to the reading or writing method.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="buffer"/> was null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="offset"/> was outside the bounds of <paramref name="buffer"/>, or
+        /// <paramref name="count"/> was negative, or the range specified by the combination of
+        /// <paramref name="offset"/> and <paramref name="count"/> exceed the length of <paramref name="buffer"/>.
+        /// </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void ValidateBufferArguments(byte[] buffer, int offset, int count)
+        {
+            if (buffer is null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            if (offset < 0)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            if ((uint)count > buffer.Length - offset)
+            {
+                throw new ArgumentOutOfRangeException();
             }
         }
     }
