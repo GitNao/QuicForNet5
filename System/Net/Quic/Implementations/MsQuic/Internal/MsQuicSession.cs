@@ -15,7 +15,7 @@ namespace System.Net.Quic.Implementations.MsQuic.Internal
         {
             if (!MsQuicApi.IsQuicSupported)
             {
-                throw new NotSupportedException(SR.net_quic_notsupported);
+                throw new NotSupportedException($"QUIC is not supported on this platform. See https://aka.ms/dotnetquic");
             }
         }
 
